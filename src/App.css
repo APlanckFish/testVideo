@@ -12,3 +12,16 @@ html body{
   position: absolute;
   top: 20px;
 }
+.quan_vcd_list-item{
+  width:100%;
+  height:100vh;
+  overflow:hidden;
+  position:relative;
+  -webkit-overflow-scrolling:touch;
+}
+.quan_vcd_list.trans{
+  transition:transform .3s ease-out 0s,-webkit-transform .3s ease-out 0s;
+}
+video .video_hide{
+  left:-100%;
+}

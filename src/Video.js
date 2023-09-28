@@ -1,5 +1,13 @@
-import React from "react";
+import React, { forwardRef } from "react";
 
-export const Video = (props) => {
-    return <video {...props} playsInline webkit-playsinline="true" x5-playsinline="true"></video>
+const Video = (props, ref) => {
+    return <video 
+        {...props} 
+        webkit-playsinline="true"
+        x5-playsinline="true"
+        playsInline
+        ref={ref}
+    ></video>
 }
+
+export default forwardRef(Video)

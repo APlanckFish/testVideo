@@ -2,13 +2,16 @@ import React , { useEffect, useRef, useState } from "react";
 import './App.css';
 import { Swiper, SwiperSlide } from "swiper/react";
 import 'swiper/css';
-import { Video } from "./Video";
+import Video from "./Video";
 import { produce } from 'immer';
+// import { Slide, SlideItem } from "./Slide";
 
 function App() {
   const [dataSource, setDataSource] = useState([]);
+  const [activeIndex, setActiveIndex] = useState(0);
   const swiperRef = useRef();
-
+  const videoRef = useRef({});
+  
   const requestApi = async () => {
     const res = await fetch("https://api-qa-sams.walmartmobile.cn/api/v1/sams/channel/portal/shortContent/queryListByPage", {
       "headers": {
@@ -45,7 +48,8 @@ function App() {
   };
 
   const playCurrentVideo = () => {
-    const currentSwiper = document.querySelector(".swiper-slide-visible");
+    const currentSwiper = document.querySelector(".swiper-slide-active");
+    console.log(currentSwiper,'currentSwiper');
     const video = currentSwiper?.querySelector("video");
     video?.play().catch(err=>{console.error(err)});
     console.log('play video', video?.dataset?.index);
@@ -96,36 +100,35 @@ function App() {
     }
   },[dataSource])
 
+  useEffect(()=>{
+    const video = videoRef.current[activeIndex];
+    video?.play().catch(console.error);
+  },[activeIndex]);
+
+  const stopVideo = (index) => {
+    videoRef.current?.[index].pause();
+  };
+
   return (
     <Swiper
-      // spaceBetween={50}
       slidesPerView={1}
-      onSlideChange={(swiper) => {
-        console.log('当前index:',swiper.activeIndex);
-        preload(swiper.activeIndex+1);
-        setTimeout(() => {
-          pauseLastNextVideo();
-          playCurrentVideo();
-        }, 0);
-        // setTimeout(() => {
-        // }, 0);
-      }}
       style={{height: "100%"}}
       direction='vertical'
       onSwiper={swiper => {swiperRef.current = swiper}}
-      virtual={{cache: true}}
-      // slideVisibleClass="swiper-slide-visible"
-      // onSlideChange={()=>{playCurrentVideo}}
+      onSlideChange={(swiper) => {
+        console.log('当前index:',swiper.activeIndex);
+        stopVideo(activeIndex);
+        setActiveIndex(swiper.activeIndex);}}
     >
       {dataSource.map((slider, index) => {
-        const { realSrc } = slider
+        const { src } = slider
         return <SwiperSlide className='swiper-container' key={index}>
           <div className='tips'>{index}</div>
           <Video 
-            src={realSrc} 
+            src={src} 
             controls 
             style={{width: '100%' , height: '100%'}} 
-            autoPlay={!!realSrc}
+            autoPlay={true}
             preload="auto" 
             onPlay={(e)=>{
               if(index === swiperRef.current?.activeIndex){
@@ -134,7 +137,12 @@ function App() {
                 e.target.pause();
               }
             }}
+            // onError={e=>{console.error(e)}}
             data-index={index} 
+            ref={ref=>{
+              if(!ref) return;
+              videoRef.current[index] = ref;
+            }}
           />
         </SwiperSlide>
       })}

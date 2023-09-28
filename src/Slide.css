@@ -1,0 +1,31 @@
+.slide {
+    height: 100%;
+    width: 100%;
+    transition: height .3s;
+    position: relative;
+    overflow: hidden;
+  
+    .slide-infinite {
+      z-index: 1;
+      margin-top: 0;
+      transition: all .3s;
+    }
+  
+    .slide-list {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      position: relative;
+    }
+
+    .flex-direction-column {
+      flex-direction: column;
+    }
+  }
+
+  .slide-item{
+    height: 100%;
+    width: 100%;
+    flex-shrink: 0;
+    position: relative;
+  }
